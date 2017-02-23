@@ -1,17 +1,25 @@
 #pragma once
 
 #include "Board.hh"
+#include <SDL.h>
 
 class LCD
 {
+public:
+    static const int WIDTH = 84, HEIGHT = 48;
+
+private:
     Board &board;
+    bool framebuf[HEIGHT][WIDTH];
+    int nextX, nextY;
 
 public:
     bool sce;
     bool dc;
 
 public:
-    LCD(Board &board_);
+    LCD(Board& board);
 
     void message(uint8_t value);
+    void draw(SDL_PixelFormat* pf, uint32_t pixels[HEIGHT][WIDTH]) const;
 };

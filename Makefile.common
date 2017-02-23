@@ -7,7 +7,7 @@ CXXFLAGS	+= -Wall -g
 
 CPPFLAGS	+= ${patsubst %,-I%,${subst :, ,${IPATH}}}
 
-CC 			?= clang
+CXX 			?= clang++
 AR 			?= ar
 RANLIB 		?= ranlib
 MKDIR		?= mkdir -p
@@ -39,7 +39,7 @@ ${OBJ}/%.cc.o: %.cc
 		$<  -c -o $@
 
 ${OBJ}/%.elf:
-	$(CC) -MMD ${CFLAGS}  ${LFLAGS} -o $@ $^ $(LDFLAGS)
+	$(CXX) -MMD ${CFLAGS}  ${LFLAGS} -o $@ $^ $(LDFLAGS)
 
 obj: ${OBJ}
 

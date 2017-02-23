@@ -12,6 +12,10 @@ all: obj ${target}
 
 include Makefile.common
 
+CXXFLAGS	+= $(shell pkg-config --cflags sdl2)
+LDFLAGS		+= $(shell pkg-config --libs sdl2)
+
+
 board = ${OBJ}/${target}.elf
 
 ${board} : ${OBJ}/${target}.cc.o ${foreach src, ${cc_srcs}, ${OBJ}/${src}.cc.o}
