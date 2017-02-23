@@ -1,5 +1,5 @@
 target=	runner
-cc_srcs = Board SPIRAM LCD
+cc_srcs = Board SPIRAM LCD Keypad
 simavr = /home/cactus/prog/arduino/libs
 
 IPATH = .

@@ -4,6 +4,7 @@ class Board;
 
 #include "SPIRAM.hh"
 #include "LCD.hh"
+#include "Keypad.hh"
 
 #include "sim_avr.h"
 
@@ -13,6 +14,7 @@ public:
 
     LCD lcd;
     SPIRAM ram;
+    Keypad keypad;
 
 public:
     Board(avr_t *avr_);

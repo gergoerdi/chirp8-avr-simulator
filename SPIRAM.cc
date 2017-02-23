@@ -1,23 +1,30 @@
 #include "Board.hh"
 #include "SPIRAM.hh"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <pthread.h>
-#include <stdbool.h>
+#include "avr_ioport.h"
 
-// #include "sim_avr.h"
-// #include "avr_ioport.h"
-// #include "avr_spi.h"
-// #include "sim_elf.h"
-// /* #include "sim_gdb.h" */
-// /* #include "sim_vcd_file.h" */
+namespace {
+    void sram_cb(struct avr_irq_t* irq, uint32_t value, void* closure)
+    {
+        SPIRAM* ram = static_cast<SPIRAM*>(closure);
+
+        // printf("SerialRAM pin %d to %d\n", irq->irq, value);
+        switch (irq->irq)
+        {
+        case 6:
+            ram->cs = value;
+        }
+    }
+}
 
 SPIRAM::SPIRAM(Board &board_):
     board(board_),
     state(COMMAND),
     addr(0)
 {
+    avr_irq_register_notify(
+        avr_io_getirq(board.avr, AVR_IOCTL_IOPORT_GETIRQ('D'), 6),
+        sram_cb, this);
 }
 
 void SPIRAM::message(uint8_t value)
