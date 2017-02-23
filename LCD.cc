@@ -8,7 +8,7 @@ namespace {
     {
         LCD* lcd = static_cast<LCD*>(closure);
 
-        printf("LCD pin %d to %d\n", irq->irq, value);
+        // printf("LCD pin %d to %d\n", irq->irq, value);
         switch (irq->irq)
         {
         case 3:
@@ -41,12 +41,14 @@ void LCD::message(uint8_t value)
 
     if (!dc)
     {
-        printf("Command to LCD: 0x%02x\n", value);
+        // printf("Command to LCD: 0x%02x\n", value);
     } else {
+        printf("LCD %d %d\t%02x\n", nextX, nextY, value);
+
         bool *block = framebuf[nextX];
         for (int i = 0; i < 8; ++i, value >>= 1)
         {
-            block[nextY + i] = value & 0x01;
+            block[nextY + i] = block[nextY + i] | value & 0x01;
         }
 
         nextY += 8;

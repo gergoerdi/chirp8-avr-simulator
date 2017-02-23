@@ -3,6 +3,8 @@
 
 #include "avr_ioport.h"
 
+#include <iostream>
+
 namespace {
     void sram_cb(struct avr_irq_t* irq, uint32_t value, void* closure)
     {
@@ -47,7 +49,7 @@ void SPIRAM::message(uint8_t value)
     case PARAM:
         switch (command) {
         case WRITE:
-                printf("ADDR = 0x%04x, VALUE = 0x%02x\n", addr, value);
+                // printf("ADDR = 0x%04x, VALUE = 0x%02x\n", addr, value);
                 ram[addr] = value;
                 break;
             case READ:
