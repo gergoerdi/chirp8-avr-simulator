@@ -10,8 +10,9 @@ public:
 
 private:
     Board &board;
-    bool framebuf[HEIGHT][WIDTH];
+    bool framebuf[WIDTH][HEIGHT];
     int nextX, nextY;
+    bool dirty;
 
 public:
     bool sce;

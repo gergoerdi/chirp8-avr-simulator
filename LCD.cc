@@ -33,6 +33,8 @@ LCD::LCD(Board& board_):
     avr_irq_register_notify(
         avr_io_getirq(board.avr, AVR_IOCTL_IOPORT_GETIRQ('D'), 5),
         lcd_cb, this);
+
+    dirty = true;
 }
 
 void LCD::message(uint8_t value)
@@ -45,11 +47,11 @@ void LCD::message(uint8_t value)
     } else {
         printf("LCD %d %d\t%02x\n", nextX, nextY, value);
 
-        bool *block = framebuf[nextX];
         for (int i = 0; i < 8; ++i, value >>= 1)
         {
-            block[nextY + i] = block[nextY + i] | value & 0x01;
+            framebuf[nextX][nextY + i] = value & 0x01;
         }
+        dirty = true;
 
         nextY += 8;
         if (nextY >= HEIGHT)
@@ -59,18 +61,20 @@ void LCD::message(uint8_t value)
         }
         if (nextX >= WIDTH)
         {
-            nextY = 0;
             nextX = 0;
+            nextY = 0;
         }
     }
 }
 
 void LCD::draw(SDL_PixelFormat* pf, uint32_t pixels[HEIGHT][WIDTH]) const
 {
+    if (!dirty) return;
+
     for (int y = 0; y < HEIGHT; ++y)
         for (int x = 0; x < WIDTH; ++x)
         {
-            pixels[y][x] = framebuf[y][x] ?
+            pixels[y][x] = (framebuf[x][y]) ?
                 SDL_MapRGB(pf, 0x00, 0x00, 0x00) :
                 SDL_MapRGB(pf, 0x73, 0xBD, 0x71);
         }
