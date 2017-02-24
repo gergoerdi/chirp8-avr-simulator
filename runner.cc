@@ -2,8 +2,7 @@
 
 #include <cstdlib>
 #include <stdexcept>
-#include <pthread.h>
-#include <stdbool.h>
+#include <thread>
 
 #include "sim_avr.h"
 #include "avr_ioport.h"
@@ -14,15 +13,12 @@
 
 #include <SDL.h>
 
-static void* avr_run_thread(void* closure)
+void runAVR(Board& board)
 {
-    Board* board = static_cast<Board*>(closure);
-
-    for (;;) {
-        board->run();
+    for (;;)
+    {
+        board.run();
     }
-
-    return 0;
 }
 
 Board setupBoard()
@@ -68,8 +64,7 @@ int main(int argc, char *argv[])
     SDL_Surface* drawSurface = SDL_CreateRGBSurfaceFrom(pixels, board.lcd.WIDTH, board.lcd.HEIGHT, 32,
                                                         board.lcd.WIDTH * 4, 0, 0, 0, 0);
 
-    pthread_t run;
-    pthread_create(&run, NULL, avr_run_thread, &board);
+    std::thread t(runAVR, std::ref(board));
 
     for (;;) {
         SDL_Event e;
