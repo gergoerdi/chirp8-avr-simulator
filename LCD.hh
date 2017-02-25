@@ -14,7 +14,6 @@ private:
     int nextX, nextY;
     bool dirty;
 
-public:
     bool sce;
     bool dc;
 

@@ -1,15 +1,8 @@
 #include "Board.hh"
+#include "Util.hh"
 
 #include "avr_spi.h"
 #include "avr_ioport.h"
-
-namespace {
-    void spi_mosi_cb(struct avr_irq_t* irq, uint32_t value, void* closure)
-    {
-        Board* board = static_cast<Board*>(closure);
-        board->mosi(value);
-    }
-}
 
 Board::Board(avr_t *avr_):
     avr(avr_),
@@ -17,10 +10,11 @@ Board::Board(avr_t *avr_):
     ram(*this),
     keypad(*this)
 {
-    avr_irq_register_notify(
+    avr_irq_register_fun(
         avr_io_getirq(avr, AVR_IOCTL_SPI_GETIRQ(0), SPI_IRQ_OUTPUT),
-        spi_mosi_cb,
-        this);
+        [this](avr_irq_t* irq, uint32_t value) {
+            this->mosi(value);
+        });
 
     avr_irq_t* const * keypadCols = keypad.getScanCols();
 

@@ -1,21 +1,11 @@
 #include "Board.hh"
 #include "Keypad.hh"
+#include "Util.hh"
 
 #include "avr_ioport.h"
 
-#include <string>
+#include <functional>
 #include <iostream>
-
-namespace {
-    void selector_cb(struct avr_irq_t* irq, uint32_t value, void* closure)
-    {
-        std::pair<Keypad*, int>* data = reinterpret_cast<std::pair<Keypad*, int>*>(closure);
-
-        Keypad* keypad = data->first;
-        int row = data->second;
-        keypad->selectRow(row, value);
-    }
-}
 
 Keypad::Keypad(Board& board_):
     board(board_)
@@ -27,27 +17,27 @@ Keypad::Keypad(Board& board_):
         scanCols[i] = avr_alloc_irq(&(board.avr->irq_pool), 0, 1, 0); // rowName.c_str());
     }
 
-    std::pair<Keypad*, int>* closure;
-
-    closure = new std::pair<Keypad*, int>(this, 0);
-    avr_irq_register_notify(
+    avr_irq_register_fun(
         avr_io_getirq(board.avr, AVR_IOCTL_IOPORT_GETIRQ('C'), 1),
-        selector_cb, closure);
-    closure = new std::pair<Keypad*, int>(this, 1);
-    avr_irq_register_notify(
+        [this](avr_irq_t *irq, uint32_t value){
+            selectRow(0, value);
+        });
+    avr_irq_register_fun(
         avr_io_getirq(board.avr, AVR_IOCTL_IOPORT_GETIRQ('C'), 0),
-        selector_cb, closure);
-    closure = new std::pair<Keypad*, int>(this, 2);
-    avr_irq_register_notify(
+        [this](avr_irq_t *irq, uint32_t value){
+            selectRow(1, value);
+        });
+    avr_irq_register_fun(
         avr_io_getirq(board.avr, AVR_IOCTL_IOPORT_GETIRQ('B'), 2),
-        selector_cb, closure);
-    closure = new std::pair<Keypad*, int>(this, 3);
-    avr_irq_register_notify(
+        [this](avr_irq_t *irq, uint32_t value){
+            selectRow(2, value);
+        });
+    avr_irq_register_fun(
         avr_io_getirq(board.avr, AVR_IOCTL_IOPORT_GETIRQ('B'), 1),
-        selector_cb, closure);
+        [this](avr_irq_t *irq, uint32_t value){
+            selectRow(3, value);
+        });
 }
-
-#include <iostream>
 
 void Keypad::setState(int row, int col, bool pressed)
 {
