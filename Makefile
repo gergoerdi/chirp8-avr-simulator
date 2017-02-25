@@ -6,8 +6,8 @@ IPATH = .
 IPATH += ${simavr}/include/simavr
 
 LIBDIR = $(simavr)/lib
-LDFLAGS += -lpthread
-CXXFLAGS += --std=c++11 -g
+LDFLAGS += -pthread -Wl,--no-as-needed
+CXXFLAGS += --std=c++11 -g -pthread
 
 all: obj ${target}
 
