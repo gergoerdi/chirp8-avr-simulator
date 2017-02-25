@@ -53,7 +53,7 @@ void SPIRAM::message(uint8_t value)
                 ram[addr] = value;
                 break;
             case READ:
-                printf("ADDR = 0x%04x\n", addr);
+                // printf("ADDR = 0x%04x\n", addr);
                 board.miso(ram[addr]);
                 break;
         };

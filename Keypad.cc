@@ -29,29 +29,29 @@ Keypad::Keypad(Board& board_):
 
     std::pair<Keypad*, int>* closure;
 
-    // closure = new std::pair<Keypad*, int>(this, 0);
-    // avr_irq_register_notify(
-    //     avr_io_getirq(board.avr, AVR_IOCTL_IOPORT_GETIRQ('C'), 1),
-    //     selector_cb, closure);
-    // closure = new std::pair<Keypad*, int>(this, 1);
-    // avr_irq_register_notify(
-    //     avr_io_getirq(board.avr, AVR_IOCTL_IOPORT_GETIRQ('C'), 0),
-    //     selector_cb, closure);
-    // closure = new std::pair<Keypad*, int>(this, 2);
-    // avr_irq_register_notify(
-    //     avr_io_getirq(board.avr, AVR_IOCTL_IOPORT_GETIRQ('B'), 2),
-    //     selector_cb, closure);
-    // closure = new std::pair<Keypad*, int>(this, 3);
-    // avr_irq_register_notify(
-    //     avr_io_getirq(board.avr, AVR_IOCTL_IOPORT_GETIRQ('B'), 1),
-    //     selector_cb, closure);
+    closure = new std::pair<Keypad*, int>(this, 0);
+    avr_irq_register_notify(
+        avr_io_getirq(board.avr, AVR_IOCTL_IOPORT_GETIRQ('C'), 1),
+        selector_cb, closure);
+    closure = new std::pair<Keypad*, int>(this, 1);
+    avr_irq_register_notify(
+        avr_io_getirq(board.avr, AVR_IOCTL_IOPORT_GETIRQ('C'), 0),
+        selector_cb, closure);
+    closure = new std::pair<Keypad*, int>(this, 2);
+    avr_irq_register_notify(
+        avr_io_getirq(board.avr, AVR_IOCTL_IOPORT_GETIRQ('B'), 2),
+        selector_cb, closure);
+    closure = new std::pair<Keypad*, int>(this, 3);
+    avr_irq_register_notify(
+        avr_io_getirq(board.avr, AVR_IOCTL_IOPORT_GETIRQ('B'), 1),
+        selector_cb, closure);
 }
 
 #include <iostream>
 
-void Keypad::setState(int x, int y, bool pressed)
+void Keypad::setState(int row, int col, bool pressed)
 {
-    keystate[x][y] = pressed;
+    keystate[row][col] = pressed;
 }
 
 void Keypad::keypress(SDL_Scancode sc, bool pressed)
@@ -113,20 +113,37 @@ void Keypad::keypress(SDL_Scancode sc, bool pressed)
 
 void Keypad::selectRow(int row, bool state)
 {
-    std::cerr << "selectRow " << row << " " << state << std::endl;
+    // std::cerr << "selectRow " << row << " " << state << std::endl;
     selectRows[row] = state;
 
-    for (int x = 0; x < 4; ++x)
+    for (int y = 0; y < 4; ++y)
+    {
+        std::cerr << ((selectRows[y] == false) ? '>' : ' ') << ' ';
+        for (int x = 0; x < 4; ++x)
+        {
+            std::cerr << (keystate[y][x] ? '#' : ' ');
+        }
+        std::cerr << std::endl;
+    }
+
+    std::cerr << "  ";
+
+    for (int col = 0; col < 4; ++col)
     {
         bool found = false;
-        for (int y = 0; y < 4; ++y)
+        for (int row = 0; row < 4; ++row)
         {
-            if (!selectRows[y])
-                found = found || keystate[x][y];
+            if (selectRows[row] == false)
+                found = found || (keystate[row][col]);
         }
 
-        avr_raise_irq(scanCols[x], !found);
+        std::cerr << (found ? '^' : ' ');
+
+        avr_raise_irq(scanCols[col], !found);
     }
+    std::cerr << std::endl;
+
+    std::cerr << std::endl;
 }
 
 avr_irq_t* const * Keypad::getScanCols() const
