@@ -103,20 +103,25 @@ void Keypad::keypress(SDL_Scancode sc, bool pressed)
 
 void Keypad::selectRow(int row, bool state)
 {
+    bool verbose = false;
+
     // std::cerr << "selectRow " << row << " " << state << std::endl;
     selectRows[row] = state;
 
-    for (int y = 0; y < 4; ++y)
+    if (verbose)
     {
-        std::cerr << ((selectRows[y] == false) ? '>' : ' ') << ' ';
-        for (int x = 0; x < 4; ++x)
+        for (int y = 0; y < 4; ++y)
         {
-            std::cerr << (keystate[y][x] ? '#' : ' ');
+            std::cerr << ((selectRows[y] == false) ? '>' : ' ') << ' ';
+            for (int x = 0; x < 4; ++x)
+            {
+                std::cerr << (keystate[y][x] ? '#' : ' ');
+            }
+            std::cerr << std::endl;
         }
-        std::cerr << std::endl;
-    }
 
-    std::cerr << "  ";
+        std::cerr << "  ";
+    }
 
     for (int col = 0; col < 4; ++col)
     {
@@ -127,13 +132,17 @@ void Keypad::selectRow(int row, bool state)
                 found = found || (keystate[row][col]);
         }
 
-        std::cerr << (found ? '^' : ' ');
+        if (verbose)
+            std::cerr << (found ? '^' : ' ');
 
         avr_raise_irq(scanCols[col], !found);
     }
-    std::cerr << std::endl;
+    if (verbose)
+    {
+        std::cerr << std::endl;
 
-    std::cerr << std::endl;
+        std::cerr << std::endl;
+    }
 }
 
 avr_irq_t* const * Keypad::getScanCols() const
