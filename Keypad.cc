@@ -16,6 +16,9 @@ Keypad::Keypad(Board& board_):
         // std::string colName = "COL" + i;
         scanCols[i] = avr_alloc_irq(&(board.avr->irq_pool), 0, 1, 0); // rowName.c_str());
     }
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 4; ++j)
+            keystate[i][j] = false;
 
     avr_irq_register_fun(
         avr_io_getirq(board.avr, AVR_IOCTL_IOPORT_GETIRQ('C'), 1),
