@@ -4,36 +4,35 @@
 
 #include "avr_ioport.h"
 
-LCD::LCD(Board& board_):
-    board(board_)
-{
-    avr_irq_register_fun(
-        avr_io_getirq(board.avr, AVR_IOCTL_IOPORT_GETIRQ('D'), 3),
-        [this](avr_irq_t* irq, uint32_t value) {
-            this->sce = value;
-        });
-    avr_irq_register_fun(
-        avr_io_getirq(board.avr, AVR_IOCTL_IOPORT_GETIRQ('D'), 4),
-        [this](avr_irq_t* irq, uint32_t value) {
-        });
-    avr_irq_register_fun(
-        avr_io_getirq(board.avr, AVR_IOCTL_IOPORT_GETIRQ('D'), 5),
-        [this](avr_irq_t* irq, uint32_t value) {
-            this->dc = value;
-        });
+namespace {
+    namespace Name {
+        const char* sce = "LCD.SCE";
+        const char* dc = "LCD.DC";
+        const char* reset = "LCD.RST";
+    }
+}
 
+LCD::LCD(Board& board_):
+    board(board_),
+    sce(avr_alloc_irq(&(board.avr->irq_pool), 0, 1, &Name::sce)),
+    dc(avr_alloc_irq(&(board.avr->irq_pool), 0, 1, &Name::dc)),
+    reset(avr_alloc_irq(&(board.avr->irq_pool), 0, 1, &Name::reset))
+{
     dirty = true;
 }
 
 void LCD::message(uint8_t value)
 {
-    if (sce) return;
+    if (sce->value != 0) {
+        // printf("LCD not selected\n");
+        return;
+    }
 
-    if (!dc)
+    if (dc->value == 0)
     {
         // printf("Command to LCD: 0x%02x\n", value);
     } else {
-        printf("LCD %d %d\t%02x\n", nextX, nextY, value);
+        // printf("LCD %d %d\t%02x\n", nextX, nextY, value);
 
         for (int i = 0; i < 8; ++i, value >>= 1)
         {

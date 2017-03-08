@@ -22,6 +22,10 @@ Board::Board(avr_t *avr_):
     avr_connect_irq(keypadCols[1], avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('C'), 4));
     avr_connect_irq(keypadCols[2], avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('C'), 3));
     avr_connect_irq(keypadCols[3], avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('C'), 2));
+
+    avr_connect_irq(avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('D'), 3), lcd.getSCE());
+    avr_connect_irq(avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('D'), 4), lcd.getReset());
+    avr_connect_irq(avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('D'), 5), lcd.getDC());
 }
 
 void Board::run()

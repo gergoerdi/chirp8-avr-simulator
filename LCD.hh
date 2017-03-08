@@ -3,6 +3,8 @@
 #include "Board.hh"
 #include <SDL.h>
 
+#include <sim_avr.h>
+
 class LCD
 {
 public:
@@ -14,12 +16,16 @@ private:
     int nextX, nextY;
     bool dirty;
 
-    bool sce;
-    bool dc;
-
+    avr_irq_t* sce;
+    avr_irq_t* dc;
+    avr_irq_t* reset;
 public:
     LCD(Board& board);
 
     void message(uint8_t value);
     void draw(SDL_PixelFormat* pf, uint32_t pixels[HEIGHT][WIDTH]) const;
+
+    avr_irq_t* const getSCE() const { return sce; }
+    avr_irq_t* const getReset() const{ return reset; }
+    avr_irq_t* const getDC() const { return dc; }
 };
