@@ -13,9 +13,9 @@
 
 #include <SDL.h>
 
-void runAVR(Board& board)
+void runAVR(Board& board, volatile bool& keepRunning)
 {
-    for (;;)
+    while (keepRunning)
     {
         board.run();
     }
@@ -64,7 +64,8 @@ int main(int argc, char *argv[])
     SDL_Surface* drawSurface = SDL_CreateRGBSurfaceFrom(pixels, board.lcd.WIDTH, board.lcd.HEIGHT, 32,
                                                         board.lcd.WIDTH * 4, 0, 0, 0, 0);
 
-    std::thread t(runAVR, std::ref(board));
+    bool keepRunning = true;
+    std::thread t(runAVR, std::ref(board), std::ref(keepRunning));
 
     for (;;) {
         SDL_Event e;
@@ -90,4 +91,7 @@ int main(int argc, char *argv[])
 
 quit:
     SDL_Quit();
+
+    keepRunning = false;
+    t.detach();
 }
