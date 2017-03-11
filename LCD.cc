@@ -14,11 +14,16 @@ namespace {
 
 LCD::LCD(Board& board_):
     board(board_),
+    nextX(0), nextY(0),
+    dirty(true),
     sce(avr_alloc_irq(&(board.avr->irq_pool), 0, 1, &Name::sce)),
     dc(avr_alloc_irq(&(board.avr->irq_pool), 0, 1, &Name::dc)),
     reset(avr_alloc_irq(&(board.avr->irq_pool), 0, 1, &Name::reset))
 {
-    dirty = true;
+    for (uint8_t x = 0; x < WIDTH; ++x)
+        for (uint8_t y = 0; y < HEIGHT; ++y)
+            framebuf[x][y] = false;
+
 }
 
 void LCD::message(uint8_t value)
