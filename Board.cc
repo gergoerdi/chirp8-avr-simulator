@@ -16,8 +16,7 @@ Board::Board(avr_t *avr_):
             this->mosi(value);
         });
 
-    avr_irq_t* const * keypadCols = keypad.getScanCols();
-
+    std::vector<avr_irq_t*> keypadCols = keypad.getCols();
     avr_connect_irq(keypadCols[0], avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('C'), 5));
     avr_connect_irq(keypadCols[1], avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('C'), 4));
     avr_connect_irq(keypadCols[2], avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('C'), 3));

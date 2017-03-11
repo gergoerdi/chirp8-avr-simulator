@@ -2,6 +2,7 @@
 
 #include "Board.hh"
 #include <SDL.h>
+#include <vector>
 
 #include "sim_avr.h"
 
@@ -11,7 +12,7 @@ private:
     Board &board;
     bool keystate[4][4];
     bool selectRows[4];
-    avr_irq_t* scanCols[4];
+    std::vector<avr_irq_t*> cols;
 
     void setState(int x, int y, bool pressed);
 
@@ -20,5 +21,5 @@ public:
     void keypress(SDL_Scancode sc, bool pressed);
 
     void selectRow(int row, bool state);
-    avr_irq_t* const * getScanCols() const;
+    std::vector<avr_irq_t*> getCols() const { return cols; };
 };

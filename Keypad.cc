@@ -12,9 +12,8 @@ Keypad::Keypad(Board& board_):
 {
     for (int i = 0; i < 4; ++i)
     {
-        // std::string rowName = "ROW" + i;
-        // std::string colName = "COL" + i;
-        scanCols[i] = avr_alloc_irq(&(board.avr->irq_pool), 0, 1, 0); // rowName.c_str());
+        // TODO: pin names
+        cols.push_back(avr_alloc_irq(&(board.avr->irq_pool), 0, 1, 0));
     }
     for (int i = 0; i < 4; ++i)
         for (int j = 0; j < 4; ++j)
@@ -138,7 +137,7 @@ void Keypad::selectRow(int row, bool state)
         if (verbose)
             std::cerr << (found ? '^' : ' ');
 
-        avr_raise_irq(scanCols[col], !found);
+        avr_raise_irq(cols[col], !found);
     }
     if (verbose)
     {
@@ -146,9 +145,4 @@ void Keypad::selectRow(int row, bool state)
 
         std::cerr << std::endl;
     }
-}
-
-avr_irq_t* const * Keypad::getScanCols() const
-{
-    return scanCols;
 }
