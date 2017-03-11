@@ -22,7 +22,8 @@ namespace {
 SPIRAM::SPIRAM(Board &board_):
     board(board_),
     state(COMMAND),
-    addr(0)
+    addr(0),
+    cs(true)
 {
     avr_irq_register_notify(
         avr_io_getirq(board.avr, AVR_IOCTL_IOPORT_GETIRQ('D'), 6),
