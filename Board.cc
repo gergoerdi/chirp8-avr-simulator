@@ -4,6 +4,8 @@
 #include "avr_spi.h"
 #include "avr_ioport.h"
 
+#include <iostream>
+
 Board::Board(avr_t *avr_):
     avr(avr_),
     lcd(*this),
@@ -21,6 +23,21 @@ Board::Board(avr_t *avr_):
     avr_connect_irq(keypadCols[1], avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('C'), 4));
     avr_connect_irq(keypadCols[2], avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('C'), 3));
     avr_connect_irq(keypadCols[3], avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('C'), 2));
+
+    std::vector<avr_irq_t*> keypadRows = keypad.getRows();
+    avr_connect_irq(avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('C'), 1), keypadRows[0]);
+    avr_connect_irq(avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('C'), 0), keypadRows[1]);
+    avr_connect_irq(avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('B'), 2), keypadRows[2]);
+    avr_connect_irq(avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('B'), 1), keypadRows[3]);
+
+    for (int i = 0; i < 4; ++i)
+        avr_irq_register_fun(
+            keypadCols[i],
+            [i](avr_irq_t *irq, uint32_t value){
+                if (value == 0)
+                    std::cerr << "keypadCols " << i << std::endl;
+            });
+
 
     avr_connect_irq(avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('D'), 3), lcd.getSCE());
     avr_connect_irq(avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('D'), 4), lcd.getReset());

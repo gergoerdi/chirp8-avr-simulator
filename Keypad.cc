@@ -14,6 +14,13 @@ Keypad::Keypad(Board& board_):
     {
         // TODO: pin names
         cols.push_back(avr_alloc_irq(&(board.avr->irq_pool), 0, 1, 0));
+        rows.push_back(avr_alloc_irq(&(board.avr->irq_pool), 0, 1, 0));
+
+        avr_irq_register_fun(
+            rows[i],
+            [this, i](avr_irq_t *irq, uint32_t value){
+                selectRow(i, value);
+            });
     }
     for (int i = 0; i < 4; ++i)
         for (int j = 0; j < 4; ++j)
@@ -107,14 +114,14 @@ void Keypad::selectRow(int row, bool state)
 {
     bool verbose = false;
 
-    // std::cerr << "selectRow " << row << " " << state << std::endl;
-    selectRows[row] = state;
+    // std::cerr << "selectRow " << row << " " << state;
+    // selectRows[row] = state;
 
     if (verbose)
     {
         for (int y = 0; y < 4; ++y)
         {
-            std::cerr << ((selectRows[y] == false) ? '>' : ' ') << ' ';
+            std::cerr << ((rows[y]->value == 0) ? '>' : ' ') << ' ';
             for (int x = 0; x < 4; ++x)
             {
                 std::cerr << (keystate[y][x] ? '#' : ' ');
@@ -130,7 +137,7 @@ void Keypad::selectRow(int row, bool state)
         bool found = false;
         for (int row = 0; row < 4; ++row)
         {
-            if (selectRows[row] == false)
+            if (rows[row]->value == 0)
                 found = found || (keystate[row][col]);
         }
 
