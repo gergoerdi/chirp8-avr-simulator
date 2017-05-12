@@ -8,10 +8,12 @@
 #include "avr_ioport.h"
 #include "avr_spi.h"
 #include "sim_elf.h"
-/* #include "sim_gdb.h" */
+#include "sim_gdb.h"
 /* #include "sim_vcd_file.h" */
 
 #include <SDL.h>
+
+#include <iostream>
 
 void runAVR(Board& board, volatile bool& keepRunning)
 {
@@ -34,12 +36,11 @@ Board setupBoard()
     avr_init(avr);
     avr_load_firmware(avr, &f);
 
-    // // even if not setup at startup, activate gdb if crashing
-    // avr->gdb_port = 1234;
-    // if (0) {
-    //     //avr->state = cpu_Stopped;
-    //     avr_gdb_init(avr);
-    // }
+    avr->gdb_port = 1234;
+    avr_gdb_init(avr);
+
+    std::string s;
+    std::getline(std::cin, s);
 
     return Board(avr);
 }
