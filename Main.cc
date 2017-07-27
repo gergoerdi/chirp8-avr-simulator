@@ -2,7 +2,6 @@
 
 #include <cstdlib>
 #include <stdexcept>
-#include <thread>
 
 #include "sim_avr.h"
 #include "avr_ioport.h"
@@ -14,14 +13,6 @@
 #include <SDL.h>
 
 #include <iostream>
-
-void runAVR(Board& board, volatile bool& keepRunning)
-{
-    while (keepRunning)
-    {
-        board.run();
-    }
-}
 
 Board setupBoard()
 {
@@ -65,10 +56,9 @@ int main(int argc, char *argv[])
     SDL_Surface* drawSurface = SDL_CreateRGBSurfaceFrom(pixels, board.lcd.WIDTH, board.lcd.HEIGHT, 32,
                                                         board.lcd.WIDTH * 4, 0, 0, 0, 0);
 
-    bool keepRunning = true;
-    std::thread t(runAVR, std::ref(board), std::ref(keepRunning));
-
     for (;;) {
+        uint32_t targetTime = SDL_GetTicks() + 17;
+
         SDL_Event e;
         while (SDL_PollEvent(&e) != 0)
         {
@@ -87,12 +77,11 @@ int main(int argc, char *argv[])
         board.lcd.draw(pf, pixels);
         SDL_BlitScaled (drawSurface, 0, screenSurface, 0);
         SDL_UpdateWindowSurface(window);
-        SDL_Delay(17);
+
+        while (SDL_GetTicks() < targetTime)
+            board.run();
     }
 
 quit:
     SDL_Quit();
-
-    keepRunning = false;
-    t.detach();
 }
