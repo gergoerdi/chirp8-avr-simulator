@@ -1,13 +1,13 @@
-target=	Main
-cc_srcs = Board Util SPIRAM LCD Keypad
-simavr = /home/cactus/prog/arduino/libs
+target		= Main
+cc_srcs		= Board Util SPIRAM LCD Keypad
+simavr		?= /home/cactus/prog/arduino/libs
 
-IPATH = .
-IPATH += ${simavr}/include/simavr
+IPATH 		= .
+IPATH 		+= ${simavr}/include/simavr
 
-LIBDIR = $(simavr)/lib
-LDFLAGS += -pthread -Wl,--no-as-needed
-CXXFLAGS += --std=c++11 -g
+LIBDIR		= $(simavr)/lib
+LDFLAGS		+= -pthread -Wl,--no-as-needed
+CXXFLAGS	+= --std=c++11 -g
 
 all: obj ${target}
 

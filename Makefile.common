@@ -30,11 +30,11 @@ LFLAGS		+= -Wl,-rpath,${LIBDIR}
 endif
 endif
 
-${OBJ}/%.c.o: %.c
+${OBJ}/%.c.o: src/%.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -MMD \
 		$<  -c -o $@
 
-${OBJ}/%.cc.o: %.cc
+${OBJ}/%.cc.o: src/%.cc
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -MMD \
 		$<  -c -o $@
 
