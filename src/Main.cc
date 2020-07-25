@@ -14,10 +14,10 @@
 
 #include <iostream>
 
-Board setupBoard()
+Board setupBoard(const char* fileName)
 {
     elf_firmware_t f;
-    elf_read_firmware("image.elf", &f);
+    elf_read_firmware(fileName, &f);
     f.frequency = 16e6;
 
     const char *mmcu = "atmega328p";
@@ -30,6 +30,7 @@ Board setupBoard()
     avr->gdb_port = 1234;
     avr_gdb_init(avr);
 
+    std::cout << "Press ENTER when ready to start" << std::endl;
     std::string s;
     std::getline(std::cin, s);
 
@@ -38,7 +39,13 @@ Board setupBoard()
 
 int main(int argc, char *argv[])
 {
-    Board board = setupBoard();
+    if (argc != 2)
+    {
+        std::cerr << "Need image.elf filename argument" << std::endl;
+        return 1;
+    }
+
+    Board board = setupBoard(argv[1]);
 
     if (SDL_Init( SDL_INIT_VIDEO ) < 0)
         throw std::runtime_error(SDL_GetError());
