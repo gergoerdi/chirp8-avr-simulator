@@ -49,14 +49,16 @@ void SPIRAM::message(uint8_t value)
         break;
     case PARAM:
         switch (command) {
+        case INIT:
+            break;
         case WRITE:
-                // printf("ADDR = 0x%04x, VALUE = 0x%02x\n", addr, value);
-                ram[addr] = value;
-                break;
-            case READ:
-                // printf("ADDR = 0x%04x, VALUE => 0x%02x\n", addr, ram[addr]);
-                board.miso(ram[addr]);
-                break;
+            // printf("ADDR = 0x%04x, VALUE = 0x%02x\n", addr, value);
+            ram[addr] = value;
+            break;
+        case READ:
+            // printf("ADDR = 0x%04x, VALUE => 0x%02x\n", addr, ram[addr]);
+            board.miso(ram[addr]);
+            break;
         };
         state = COMMAND;
         break;
