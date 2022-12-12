@@ -14,7 +14,7 @@
 
 #include <iostream>
 
-Board setupBoard(const char* fileName)
+Board setupBoard(const char* fileName, bool use_gdb)
 {
     elf_firmware_t f;
     elf_read_firmware(fileName, &f);
@@ -27,12 +27,15 @@ Board setupBoard(const char* fileName)
     avr_init(avr);
     avr_load_firmware(avr, &f);
 
-    avr->gdb_port = 1234;
-    avr_gdb_init(avr);
+    if (use_gdb)
+    {
+        avr->gdb_port = 1234;
+        avr_gdb_init(avr);
 
-    std::cout << "Press ENTER when ready to start" << std::endl;
-    std::string s;
-    std::getline(std::cin, s);
+        std::cout << "Press ENTER when ready to start" << std::endl;
+        std::string s;
+        std::getline(std::cin, s);
+    }
 
     return Board(avr);
 }
@@ -45,7 +48,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    Board board = setupBoard(argv[1]);
+    Board board = setupBoard(argv[1], false);
 
     if (SDL_Init( SDL_INIT_VIDEO ) < 0)
         throw std::runtime_error(SDL_GetError());
