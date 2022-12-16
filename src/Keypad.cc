@@ -53,61 +53,27 @@ void Keypad::setState(int row, int col, bool pressed)
     keystate[row][col] = pressed;
 }
 
-void Keypad::keypress(SDL_Scancode sc, bool pressed)
+void Keypad::processKeys(const uint8_t* keys)
 {
-    switch (sc)
-    {
-    case SDL_SCANCODE_1:
-        setState(0, 0, pressed);
-        break;
-    case SDL_SCANCODE_2:
-        setState(0, 1, pressed);
-        break;
-    case SDL_SCANCODE_3:
-        setState(0, 2, pressed);
-        break;
-    case SDL_SCANCODE_4:
-        setState(0, 3, pressed);
-        break;
-    case SDL_SCANCODE_Q:
-        setState(1, 0, pressed);
-        break;
-    case SDL_SCANCODE_W:
-        setState(1, 1, pressed);
-        break;
-    case SDL_SCANCODE_E:
-        setState(1, 2, pressed);
-        break;
-    case SDL_SCANCODE_R:
-        setState(1, 3, pressed);
-        break;
-    case SDL_SCANCODE_A:
-        setState(2, 0, pressed);
-        break;
-    case SDL_SCANCODE_S:
-        setState(2, 1, pressed);
-        break;
-    case SDL_SCANCODE_D:
-        setState(2, 2, pressed);
-        break;
-    case SDL_SCANCODE_F:
-        setState(2, 3, pressed);
-        break;
-    case SDL_SCANCODE_Z:
-        setState(3, 0, pressed);
-        break;
-    case SDL_SCANCODE_X:
-        setState(3, 1, pressed);
-        break;
-    case SDL_SCANCODE_C:
-        setState(3, 2, pressed);
-        break;
-    case SDL_SCANCODE_V:
-        setState(3, 3, pressed);
-        break;
-    default:
-        break;
-    }
+    setState(0, 0, keys[SDL_SCANCODE_1]);
+    setState(0, 1, keys[SDL_SCANCODE_2]);
+    setState(0, 2, keys[SDL_SCANCODE_3]);
+    setState(0, 3, keys[SDL_SCANCODE_4]);
+
+    setState(1, 0, keys[SDL_SCANCODE_Q]);
+    setState(1, 1, keys[SDL_SCANCODE_W]);
+    setState(1, 2, keys[SDL_SCANCODE_E]);
+    setState(1, 3, keys[SDL_SCANCODE_R]);
+
+    setState(2, 0, keys[SDL_SCANCODE_A]);
+    setState(2, 1, keys[SDL_SCANCODE_S]);
+    setState(2, 2, keys[SDL_SCANCODE_D]);
+    setState(2, 3, keys[SDL_SCANCODE_F]);
+
+    setState(3, 0, keys[SDL_SCANCODE_Z]);
+    setState(3, 1, keys[SDL_SCANCODE_X]);
+    setState(3, 2, keys[SDL_SCANCODE_C]);
+    setState(3, 3, keys[SDL_SCANCODE_V]);
 }
 
 void Keypad::selectRow(int row, bool state)

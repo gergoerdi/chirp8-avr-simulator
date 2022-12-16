@@ -18,7 +18,7 @@ private:
 
 public:
     Keypad(Board& board);
-    void keypress(SDL_Scancode sc, bool pressed);
+    void processKeys(const uint8_t* keys);
 
     void selectRow(int row, bool state);
     std::vector<avr_irq_t*> getCols() const { return cols; };

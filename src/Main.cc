@@ -66,6 +66,8 @@ int main(int argc, char *argv[])
     SDL_Surface* drawSurface = SDL_CreateRGBSurfaceFrom(pixels, board.lcd.WIDTH, board.lcd.HEIGHT, 32,
                                                         board.lcd.WIDTH * 4, 0, 0, 0, 0);
 
+    const uint8_t* keyState = SDL_GetKeyboardState(0);
+
     for (;;) {
         uint32_t targetTime = SDL_GetTicks() + 17;
 
@@ -78,12 +80,11 @@ int main(int argc, char *argv[])
                 goto quit;
                 break;
             case SDL_KEYDOWN:
-            case SDL_KEYUP:
-                board.keypad.keypress(e.key.keysym.scancode, e.key.state == SDL_PRESSED);
+                if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) goto quit;
                 break;
             }
         }
-
+        board.keypad.processKeys(keyState);
         board.lcd.draw(pf, pixels);
         SDL_BlitScaled (drawSurface, 0, screenSurface, 0);
         SDL_UpdateWindowSurface(window);
