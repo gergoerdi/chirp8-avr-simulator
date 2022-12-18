@@ -37,7 +37,7 @@ void LCD::message(uint8_t value)
     {
         // printf("Command to LCD: 0x%02x\n", value);
     } else {
-        // printf("LCD %d %d\t%02x\n", nextX, nextY, value);
+        // printf("LCD %02d %02d\t%02x\n", nextX, nextY, value);
 
         for (int i = 0; i < 8; ++i, value >>= 1)
         {
